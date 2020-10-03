@@ -19,5 +19,8 @@
     "require": {
         "php": ">=7.1",
         "lib-libxml": "*"
+    },
+    "require-dev": {
+        "phan/phan": "^3.0"
     }
 }

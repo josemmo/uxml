@@ -36,7 +36,7 @@ class UXML {
      * @param  DOMDocument|null $doc   Document instance
      * @return self                    New instamce
      */
-    public static function newInstance(string $name, ?string $value=null, array $attrs=[], DOMDocument $doc=null) {
+    public static function newInstance(string $name, ?string $value=null, array $attrs=[], DOMDocument $doc=null): self {
         $targetDoc = ($doc === null) ? new DOMDocument() : $doc;
         $domElement = $targetDoc->createElement($name, $value);
 
@@ -57,6 +57,7 @@ class UXML {
     /**
      * Class constructor
      * @param DOMElement $element DOM Element instance
+     * @suppress PhanUndeclaredProperty
      */
     public function __construct(DOMElement $element) {
         $this->element = $element;
@@ -114,6 +115,7 @@ class UXML {
         $domNodes = $xpathInstance->query($xpath, $this->element);
         foreach ($domNodes as $domNode) {
             if (!$domNode instanceof DOMElement) continue;
+            // @phan-suppress-next-line PhanUndeclaredProperty
             $res[] = $domNode->uxml ?? new self($domNode);
             if (($limit !== null) && (--$limit <= 0)) break;
         }
