@@ -1,7 +1,7 @@
 # Uncomplicated XML
-[![Latest Version](https://poser.pugx.org/josemmo/uxml/version)](https://packagist.org/packages/josemmo/uxml)
+[![Latest Version](https://img.shields.io/packagist/v/josemmo/uxml)](https://packagist.org/packages/josemmo/uxml)
 [![Minimum PHP Version](https://img.shields.io/packagist/php-v/josemmo/uxml)](#installation)
-[![License](https://poser.pugx.org/josemmo/uxml/license)](LICENSE)
+[![License](https://img.shields.io/github/license/josemmo/uxml)](LICENSE)
 
 UXML is an *extremely* simple PHP library for manipulating XML documents with ease while keeping overhead to a bare minimum.
 
