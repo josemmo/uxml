@@ -47,7 +47,7 @@ $xml = \UXML\UXML::newInstance('RootTagName');
 You can also wrap an already existing `DOMElement`:
 ```php
 $domElement = new DOMElement('TagName');
-$xml = new \UXML\UXML($domElement);
+$xml = \UXML\UXML::fromElement($domElement);
 ```
 
 ### Load an XML document from source

@@ -21,7 +21,7 @@ final class UXMLTest extends TestCase {
         $xml = UXML::newInstance('RootTagName');
         $this->assertEquals('<RootTagName/>', $xml);
 
-        $xml = new UXML(new DOMElement('TagName'));
+        $xml = UXML::fromElement(new DOMElement('TagName'));
         $this->assertEquals('<TagName/>', $xml);
     }
 
