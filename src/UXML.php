@@ -19,8 +19,20 @@ class UXML {
      * @param  string $xmlString XML string
      * @return self              Root XML element
      * @throws InvalidArgumentException if failed to parse XML
+     * @deprecated 0.1.0 Will be removed in next release, renamed to UXML::fromString()
      */
     public static function load(string $xmlString): self {
+        return self::fromString($xmlString);
+    }
+
+
+    /**
+     * Create instance from XML string
+     * @param  string $xmlString XML string
+     * @return self              Root XML element
+     * @throws InvalidArgumentException if failed to parse XML
+     */
+    public static function fromString(string $xmlString): self {
         $doc = new DOMDocument();
         if ($doc->loadXML($xmlString) === false) {
             throw new InvalidArgumentException('Failed to parse XML string');

@@ -34,7 +34,7 @@ final class UXMLTest extends TestCase {
         $source .= "<fruit>Tomato</fruit>";
         $source .= "</optional>";
         $source .= "</fruits>";
-        $xml = UXML::load($source);
+        $xml = UXML::fromString($source);
         $this->assertEquals($source, $xml);
     }
 
@@ -68,7 +68,7 @@ final class UXMLTest extends TestCase {
             </director>
         </movie>
         XML;
-        $xml = UXML::load($source);
+        $xml = UXML::fromString($source);
 
         $this->assertEquals('<year>1970</year>', $xml->get('director/year'));
         $this->assertEquals('<year>1970</year>', $xml->get('director')->get('year'));
@@ -93,7 +93,7 @@ final class UXMLTest extends TestCase {
                 <c>-3</c>
             </root>
         XML;
-        $xml = UXML::load($source);
+        $xml = UXML::fromString($source);
 
         $this->assertEquals('1,2,3',    $this->listToText($xml->getAll('a/b')));
         $this->assertEquals('1,2',      $this->listToText($xml->getAll('a/b', 2)));
@@ -103,7 +103,7 @@ final class UXMLTest extends TestCase {
     }
 
     public function testCanHandleClarkNotation(): void {
-        $xml = UXML::load('<a xmlns:ns="urn:abc"><ns:b /><ns:c /></a>');
+        $xml = UXML::fromString('<a xmlns:ns="urn:abc"><ns:b /><ns:c /></a>');
         $this->assertEquals('<ns:b xmlns:ns="urn:abc"/>', $xml->get('{urn:abc}b'));
         $this->assertSame($xml->get('{urn:abc}b'), $xml->get('ns:b'));
     }

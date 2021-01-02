@@ -60,7 +60,7 @@ $source = <<<XML
     <fruit>Tomato</fruit>
 </fruits>
 XML;
-$xml = \UXML\UXML::load($source);
+$xml = \UXML\UXML::fromString($source);
 ```
 
 ### Add elements to a node
@@ -123,7 +123,7 @@ var_dump($xml->get('birthday')); // NULL
 
 Or even multiple elements:
 ```php
-$xml = \UXML\UXML::load('<a><b>1</b><b>2</b><b>3</b></a>');
+$xml = \UXML\UXML::fromString('<a><b>1</b><b>2</b><b>3</b></a>');
 foreach ($xml->getAll('b') as $elem) {
     echo "Element says: " . $elem->asText() . "\n";
 }
@@ -142,7 +142,7 @@ $source = <<<XML
     </director>
 </movie>
 XML;
-$xml = \UXML\UXML::load($source);
+$xml = \UXML\UXML::fromString($source);
 
 echo $xml->get('director/year'); // <year>1970</year>
 echo $xml->get('director')->get('year'); // <year>1970</year>
@@ -167,7 +167,7 @@ echo $xml; // <TagName xmlns="https://example.com"
 
 However, when querying elements, the prefix defined in the document may not be the one you are expecting:
 ```php
-$xml = \UXML\UXML::load('<a xmlns:ns="urn:abc"><ns:b /></a>');
+$xml = \UXML\UXML::fromString('<a xmlns:ns="urn:abc"><ns:b /></a>');
 echo $xml->get('ns:b'); // <ns:b />
 echo $xml->get('abc:b'); // Is NULL as the prefix does not exist
 ```
