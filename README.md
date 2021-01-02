@@ -147,7 +147,7 @@ $xml = \UXML\UXML::load($source);
 echo $xml->get('director/year'); // <year>1970</year>
 echo $xml->get('director')->get('year'); // <year>1970</year>
 echo $xml->get('year'); // <year>2010</year>
-echo $xml->get('director')->get('//year') // <year>2010</year>
+echo $xml->get('director')->get('//year'); // <year>2010</year>
 ```
 
 ### Namespaces
