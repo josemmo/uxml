@@ -146,16 +146,16 @@ class UXML {
 
     /**
      * Export as XML string
-     * @param  string  $version  Document version
-     * @param  string  $encoding Document encoding
-     * @param  boolean $format   Format output
-     * @return string            XML string
+     * @param  string|null $version  Document version, NULL for no declaration
+     * @param  string      $encoding Document encoding
+     * @param  boolean     $format   Format output
+     * @return string                XML string
      */
-    public function asXML(string $version="1.0", string $encoding="UTF-8", bool $format=true): string {
+    public function asXML(?string $version="1.0", string $encoding="UTF-8", bool $format=true): string {
         $doc = new DOMDocument($version, $encoding);
         $doc->formatOutput = $format;
         $doc->appendChild($doc->importNode($this->element, true));
-        $res = $doc->saveXML();
+        $res = ($version === null) ? $doc->saveXML($doc->documentElement) : $doc->saveXML();
         unset($doc);
         return $res;
     }
@@ -165,6 +165,6 @@ class UXML {
      * @inheritdoc
      */
     public function __toString(): string {
-        return $this->asXML();
+        return $this->asXML(null, '', false);
     }
 }
