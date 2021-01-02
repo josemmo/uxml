@@ -16,11 +16,17 @@
             "UXML\\": "src/"
         }
     },
+    "autoload-dev": {
+        "psr-4": {
+            "Tests\\": "tests/"
+        }
+    },
     "require": {
         "php": ">=7.1",
         "lib-libxml": "*"
     },
     "require-dev": {
-        "phan/phan": "^3.0"
+        "phpunit/phpunit": "^9",
+        "phan/phan": "^4"
     }
 }
