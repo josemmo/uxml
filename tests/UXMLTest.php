@@ -107,4 +107,16 @@ final class UXMLTest extends TestCase {
         $this->assertEquals('<ns:b xmlns:ns="urn:abc"/>', $xml->get('{urn:abc}b'));
         $this->assertSame($xml->get('{urn:abc}b'), $xml->get('ns:b'));
     }
+
+    public function testCanGetParent(): void {
+        $root = UXML::newInstance('Root');
+        $level1 = $root->add('Level1');
+        $level2 = $level1->add('Level2');
+        $level3 = $level2->add('Level3');
+        $this->assertSame($level2, $level3->parent());
+        $this->assertSame($level1, $level2->parent());
+        $this->assertSame($root, $level1->parent());
+        $this->assertSame($root, $root->parent());
+        $this->assertSame($root, $level3->parent()->parent()->parent()->parent());
+    }
 }

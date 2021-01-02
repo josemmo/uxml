@@ -100,6 +100,25 @@ class UXML {
 
 
     /**
+     * Get parent element
+     * @return self Parent element instance or this instance if it has no parent
+     */
+    public function parent(): self {
+        $parentNode = $this->element->parentNode;
+        return ($parentNode !== null && $parentNode instanceof DOMElement) ? self::fromElement($parentNode) : $this;
+    }
+
+
+    /**
+     * Is empty
+     * @return boolean TRUE if the element has no inner content, FALSE otherwise
+     */
+    public function isEmpty(): bool {
+        return ($this->element->childNodes->length === 0);
+    }
+
+
+    /**
      * Add child element
      * @param  string      $name  New element tag name
      * @param  string|null $value New element value or NULL for empty
