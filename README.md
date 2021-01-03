@@ -1,4 +1,5 @@
 # Uncomplicated XML
+[![Build Status](https://travis-ci.com/josemmo/uxml.svg?branch=main)](https://travis-ci.com/josemmo/uxml)
 [![Latest Version](https://img.shields.io/packagist/v/josemmo/uxml)](https://packagist.org/packages/josemmo/uxml)
 [![Minimum PHP Version](https://img.shields.io/packagist/php-v/josemmo/uxml)](#installation)
 [![License](https://img.shields.io/github/license/josemmo/uxml)](LICENSE)
