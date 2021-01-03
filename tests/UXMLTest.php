@@ -80,18 +80,18 @@ final class UXMLTest extends TestCase {
 
     public function testCanGetAllElements(): void {
         $source = <<<XML
-            <root>
-                <a>
-                    <b>1</b>
-                    <b>2</b>
-                    <c>-1</c>
-                    <b>3</b>
-                    <c>-2</c>
-                    <d>Inf</d>
-                </a>
-                <b>4</b>
-                <c>-3</c>
-            </root>
+        <root>
+            <a>
+                <b>1</b>
+                <b>2</b>
+                <c>-1</c>
+                <b>3</b>
+                <c>-2</c>
+                <d>Inf</d>
+            </a>
+            <b>4</b>
+            <c>-3</c>
+        </root>
         XML;
         $xml = UXML::fromString($source);
 

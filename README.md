@@ -109,6 +109,8 @@ Besides casting `UXML` objects to a `string`, there is a method for exporting th
 $xml->asXML();
 ```
 
+By default, exported strings include an XML declaration (except when casting `UXML` instances to a `string`).
+
 ### Find XML elements
 UXML allows you to use XPath 1.0 queries to get a particular element from a document:
 ```php
