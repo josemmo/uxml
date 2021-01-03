@@ -119,4 +119,27 @@ final class UXMLTest extends TestCase {
         $this->assertSame($root, $root->parent());
         $this->assertSame($root, $level3->parent()->parent()->parent()->parent());
     }
+
+    public function testCanRemoveElements(): void {
+        $source = <<<XML
+        <root>
+            <a>1</a>
+            <a>2</a>
+            <a>3</a>
+            <b>4</b>
+            <b>5</b>
+            <b>6</b>
+            <a>7</a>
+            <a>8</a>
+            <b>9</b>
+            <a>10</a>
+        </root>
+        XML;
+        $xml = UXML::fromString($source);
+        foreach ($xml->getAll('a') as $item) {
+            $item->remove();
+        }
+        $this->assertEmpty($xml->getAll('a'));
+        $this->assertEquals('<root><b>4</b><b>5</b><b>6</b><b>9</b></root>', $xml);
+    }
 }

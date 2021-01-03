@@ -180,6 +180,17 @@ class UXML {
 
 
     /**
+     * Remove this element
+     * 
+     * After calling this method on an instance it will become unusable.
+     * Calling it on a root element will have no effect.
+     */
+    public function remove(): void {
+        $this->element->parentNode->removeChild($this->element);
+    }
+
+
+    /**
      * Export element and children as text
      * @return string Text representation
      */

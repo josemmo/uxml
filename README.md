@@ -152,6 +152,25 @@ echo $xml->get('year'); // <year>2010</year>
 echo $xml->get('director')->get('//year'); // <year>2010</year>
 ```
 
+### Remove XML elements
+Elements can be removed from the XML tree by calling the `remove()` method on them.
+After an element is removed, it becomes unusable:
+```php
+$source = <<<XML
+<project>
+    <public>
+        <name>Alpha</name>
+    </public>
+    <confidential>
+        <budget>1,000,000 USD</budget>
+    </confidential>
+</project>
+XML;
+$xml = \UXML\UXML::fromString($source);
+$xml->get('confidential')->remove();
+echo $xml; // <project><public><name>Alpha</name></public></project>
+```
+
 ### Namespaces
 Namespaces are assigned in the same way as other attributes:
 ```php
