@@ -22,8 +22,8 @@
         }
     },
     "require": {
-        "php": ">=7.1",
-        "lib-libxml": "*"
+        "php": ">=7.3",
+        "lib-libxml": ">=2.9.0"
     },
     "require-dev": {
         "phpunit/phpunit": "^9",
