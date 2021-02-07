@@ -58,16 +58,16 @@ final class UXMLTest extends TestCase {
 
     public function testCanGetSingleElement(): void {
         $source = <<<XML
-        <movie>
-            <name lang="en-US">Inception</name>
-            <year>2010</year>
-            <director>
-                <name>Christopher</name>
-                <surname>Nolan</surname>
-                <year>1970</year>
-            </director>
-        </movie>
-        XML;
+<movie>
+    <name lang="en-US">Inception</name>
+    <year>2010</year>
+    <director>
+        <name>Christopher</name>
+        <surname>Nolan</surname>
+        <year>1970</year>
+    </director>
+</movie>
+XML;
         $xml = UXML::fromString($source);
 
         $this->assertEquals('<year>1970</year>', $xml->get('director/year'));
@@ -80,19 +80,19 @@ final class UXMLTest extends TestCase {
 
     public function testCanGetAllElements(): void {
         $source = <<<XML
-        <root>
-            <a>
-                <b>1</b>
-                <b>2</b>
-                <c>-1</c>
-                <b>3</b>
-                <c>-2</c>
-                <d>Inf</d>
-            </a>
-            <b>4</b>
-            <c>-3</c>
-        </root>
-        XML;
+<root>
+    <a>
+        <b>1</b>
+        <b>2</b>
+        <c>-1</c>
+        <b>3</b>
+        <c>-2</c>
+        <d>Inf</d>
+    </a>
+    <b>4</b>
+    <c>-3</c>
+</root>
+XML;
         $xml = UXML::fromString($source);
 
         $this->assertEquals('1,2,3',    $this->listToText($xml->getAll('a/b')));
@@ -122,19 +122,19 @@ final class UXMLTest extends TestCase {
 
     public function testCanRemoveElements(): void {
         $source = <<<XML
-        <root>
-            <a>1</a>
-            <a>2</a>
-            <a>3</a>
-            <b>4</b>
-            <b>5</b>
-            <b>6</b>
-            <a>7</a>
-            <a>8</a>
-            <b>9</b>
-            <a>10</a>
-        </root>
-        XML;
+<root>
+    <a>1</a>
+    <a>2</a>
+    <a>3</a>
+    <b>4</b>
+    <b>5</b>
+    <b>6</b>
+    <a>7</a>
+    <a>8</a>
+    <b>9</b>
+    <a>10</a>
+</root>
+XML;
         $xml = UXML::fromString($source);
         foreach ($xml->getAll('a') as $item) {
             $item->remove();
