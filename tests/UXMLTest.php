@@ -34,6 +34,19 @@ final class UXMLTest extends TestCase {
         UXML::newInstance('Test&Fail', 'Not a valid tag name');
     }
 
+    public function testCanExportXml(): void {
+        $xml = UXML::newInstance('Root');
+        $this->assertEquals('<Root/>', (string) $xml);
+        $this->assertEquals('<Root/>', $xml->asXML(null));
+        $this->assertEquals("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<Root/>\n", $xml->asXML());
+        $this->assertEquals("<?xml version=\"1.1\" encoding=\"ISO-8859-1\"?>\n<Root/>\n", $xml->asXML('1.1', 'ISO-8859-1'));
+
+        $xml = UXML::fromString('<a><b>1</b><b>2</b></a>');
+        $this->assertEquals("<a>\n  <b>1</b>\n  <b>2</b>\n</a>", $xml->asXML(null));
+        $this->assertEquals('<a><b>1</b><b>2</b></a>', (string) $xml);
+        $this->assertEquals('<a><b>1</b><b>2</b></a>', $xml->asXML(null, 'UTF-8', false));
+    }
+
     public function testCanLoadXml(): void {
         $source  = "<fruits>";
         $source .= "<fruit>Banana</fruit>";
