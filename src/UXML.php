@@ -9,22 +9,9 @@ use function count;
 use function preg_replace_callback;
 use function strpos;
 
-/** @phan-file-suppress PhanDeprecatedFunction */
 class UXML {
     const NS_PREFIX = "__uxml_ns_";
     protected $element;
-
-    /**
-     * Load XML document
-     * @param  string $xmlString XML string
-     * @return self              Root XML element
-     * @throws InvalidArgumentException if failed to parse XML
-     * @deprecated 0.1.0 Will be removed in next release, renamed to UXML::fromString()
-     */
-    public static function load(string $xmlString): self {
-        return self::fromString($xmlString);
-    }
-
 
     /**
      * Create instance from XML string
@@ -83,10 +70,9 @@ class UXML {
     /**
      * Class constructor
      * @param DOMElement $element DOM Element instance
-     * @deprecated 0.1.0 Will become private in next release, use UXML::fromElement() instead
      * @suppress PhanUndeclaredProperty
      */
-    public function __construct(DOMElement $element) {
+    private function __construct(DOMElement $element) {
         $this->element = $element;
         $this->element->uxml = $this;
     }
