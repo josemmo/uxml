@@ -138,6 +138,7 @@ class UXML {
         }, $xpath);
 
         // Create instance
+        // @phan-suppress-next-line PhanTypeMismatchArgumentNullableInternal
         $xpathInstance = new DOMXPath($this->element->ownerDocument);
         foreach ($namespaces as $ns=>$prefix) {
             $xpathInstance->registerNamespace($prefix, $ns);
