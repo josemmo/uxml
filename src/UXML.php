@@ -11,6 +11,7 @@ use function strpos;
 
 class UXML {
     const NS_PREFIX = "__uxml_ns_";
+    /** @var DOMElement */
     protected $element;
 
     /**
