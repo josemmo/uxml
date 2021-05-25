@@ -2,6 +2,7 @@
 namespace Tests;
 
 use DOMElement;
+use DOMException;
 use UXML\UXML;
 use PHPUnit\Framework\TestCase;
 
@@ -23,6 +24,14 @@ final class UXMLTest extends TestCase {
 
         $xml = UXML::fromElement(new DOMElement('TagName'));
         $this->assertEquals('<TagName/>', $xml);
+    }
+
+    public function testCanHandleSpecialCharacters(): void {
+        $xml = UXML::newInstance('Test', 'A&a Co. > B&b Ltd.');
+        $this->assertEquals('<Test>A&amp;a Co. &gt; B&amp;b Ltd.</Test>', $xml);
+
+        $this->expectException(DOMException::class);
+        UXML::newInstance('Test&Fail', 'Not a valid tag name');
     }
 
     public function testCanLoadXml(): void {
