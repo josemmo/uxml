@@ -51,7 +51,7 @@ class UXML {
      * @return self                    New instance
      * @throws DOMException if failed to create new instance
      */
-    public static function newInstance(string $name, ?string $value=null, array $attrs=[], DOMDocument $doc=null): self {
+    public static function newInstance(string $name, ?string $value=null, array $attrs=[], ?DOMDocument $doc=null): self {
         $targetDoc = ($doc === null) ? new DOMDocument() : $doc;
         $domElement = $targetDoc->createElement($name);
         if ($domElement === false) {
