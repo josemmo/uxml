@@ -3,6 +3,7 @@ namespace UXML;
 
 use DOMDocument;
 use DOMElement;
+use DOMException;
 use DOMXPath;
 use InvalidArgumentException;
 use function count;
@@ -47,11 +48,17 @@ class UXML {
      * @param  string|null      $value Element value or NULL for empty
      * @param  array            $attrs Element attributes
      * @param  DOMDocument|null $doc   Document instance
-     * @return self                    New instamce
+     * @return self                    New instance
+     * @throws DOMException if failed to create new instance
      */
     public static function newInstance(string $name, ?string $value=null, array $attrs=[], DOMDocument $doc=null): self {
         $targetDoc = ($doc === null) ? new DOMDocument() : $doc;
         $domElement = $targetDoc->createElement($name);
+        if ($domElement === false) {
+            throw new DOMException('Failed to create DOMElement');
+        }
+
+        // Set content
         if ($value !== null) {
             $domElement->textContent = $value;
         }
@@ -115,6 +122,7 @@ class UXML {
      * @param  string|null $value New element value or NULL for empty
      * @param  array       $attrs New element attributes
      * @return self               New element instance
+     * @throws DOMException if failed to create child element
      */
     public function add(string $name, ?string $value=null, array $attrs=[]): self {
         $child = self::newInstance($name, $value, $attrs, $this->element->ownerDocument);
@@ -199,6 +207,8 @@ class UXML {
      */
     public function asXML(?string $version="1.0", string $encoding="UTF-8", bool $format=true): string {
         $doc = new DOMDocument();
+
+        // Define document properties
         if ($version === null) {
             $doc->xmlStandalone = true;
         } else {
@@ -206,9 +216,15 @@ class UXML {
         }
         $doc->encoding = $encoding;
         $doc->formatOutput = $format;
-        $doc->appendChild($doc->importNode($this->element, true));
+
+        // Export XML string
+        $rootNode = $doc->importNode($this->element, true);
+        if ($rootNode !== false) {
+            $doc->appendChild($rootNode);
+        }
         $res = ($version === null) ? $doc->saveXML($doc->documentElement) : $doc->saveXML();
         unset($doc);
+
         return $res;
     }
 
