@@ -185,7 +185,10 @@ class UXML {
      * Calling it on a root element will have no effect.
      */
     public function remove(): void {
-        $this->element->parentNode->removeChild($this->element);
+        $parent = $this->element->parentNode;
+        if ($parent !== null) {
+            $parent->removeChild($this->element);
+        }
     }
 
 
