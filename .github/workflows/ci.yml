@@ -9,9 +9,9 @@ jobs:
     continue-on-error: ${{ matrix.experimental || false }}
     strategy:
       matrix:
-        php-version: ['7.1', '7.2', '7.3', '7.4', '8.0']
+        php-version: ['7.1', '7.2', '7.3', '7.4', '8.0', '8.1']
         include:
-          - php-version: '8.1'
+          - php-version: '8.2'
             experimental: true
     steps:
       # Download code from repository

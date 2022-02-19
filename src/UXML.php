@@ -44,11 +44,11 @@ class UXML {
 
     /**
      * Create new instance
-     * @param  string           $name  Element tag name
-     * @param  string|null      $value Element value or NULL for empty
-     * @param  array            $attrs Element attributes
-     * @param  DOMDocument|null $doc   Document instance
-     * @return self                    New instance
+     * @param  string               $name  Element tag name
+     * @param  string|null          $value Element value or `null` for empty
+     * @param  array<string,string> $attrs Element attributes
+     * @param  DOMDocument|null     $doc   Document instance
+     * @return self                        New instance
      * @throws DOMException if failed to create new instance
      */
     public static function newInstance(string $name, ?string $value=null, array $attrs=[], ?DOMDocument $doc=null): self {
@@ -148,7 +148,6 @@ class UXML {
         }, $xpath);
 
         // Create instance
-        // @phan-suppress-next-line PhanTypeMismatchArgumentNullableInternal
         $xpathInstance = new DOMXPath($this->element->ownerDocument);
         foreach ($namespaces as $ns=>$prefix) {
             $xpathInstance->registerNamespace($prefix, $ns);
