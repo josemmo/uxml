@@ -145,10 +145,11 @@ class UXML {
             if (!isset($namespaces[$ns])) {
                 $namespaces[$ns] = self::NS_PREFIX . count($namespaces);
             }
-            return $namespaces[$ns] . ":";
+            return $namespaces[$ns] . ':';
         }, $xpath);
 
         // Create instance
+        // @phan-suppress-next-line PhanTypeMismatchArgumentNullableInternal
         $xpathInstance = new DOMXPath($this->element->ownerDocument);
         foreach ($namespaces as $ns=>$prefix) {
             $xpathInstance->registerNamespace($prefix, $ns);
