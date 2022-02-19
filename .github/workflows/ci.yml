@@ -28,7 +28,7 @@ jobs:
 
       # Setup Composer
       - name: Setup Composer
-        run: composer validate --strict && composer install --ignore-platform-reqs
+        run: composer validate --strict && composer install
 
       # Run static analyzer
       - name: Run static analyzer

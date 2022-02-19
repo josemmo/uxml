@@ -26,7 +26,7 @@
         "lib-libxml": "*"
     },
     "require-dev": {
-        "phan/phan": "^5.3",
+        "phan/phan": "*",
         "symfony/phpunit-bridge": "*"
     }
 }
