@@ -49,6 +49,7 @@ return [
     'directory_list' => [
         'src',
         'vendor',
+        '.phan/stubs',
     ],
 
     // A directory list that defines files that will be excluded
@@ -64,6 +65,7 @@ return [
     //       and `exclude_analysis_directory_list` arrays.
     'exclude_analysis_directory_list' => [
         'vendor',
+        '.phan/stubs',
     ],
 
     // If enabled, Phan will warn if **any** type in a method invocation's object
