@@ -1,6 +1,7 @@
 <?php
 namespace Tests;
 
+use DOMDocument;
 use DOMElement;
 use DOMException;
 use UXML\UXML;
@@ -163,5 +164,22 @@ XML;
         }
         $this->assertEmpty($xml->getAll('a'));
         $this->assertEquals('<root><b>4</b><b>5</b><b>6</b><b>9</b></root>', $xml);
+    }
+
+    public function testCanHandleExistingInstances(): void {
+        $doc = new DOMDocument();
+
+        $rootNode = $doc->createElement('root');
+        $rootA = UXML::fromElement($rootNode);
+        $rootB = UXML::fromElement($rootNode);
+        $this->assertSame($rootA, $rootB);
+        $this->assertSame($rootA->element(), $rootNode);
+
+        $child = UXML::newInstance('Child', null, [], $doc);
+        $childNode = $child->element();
+        $rootNode->appendChild($childNode);
+        $this->assertSame($rootA->get('Child'), $child);
+        $this->assertSame($child->parent(), $rootA);
+        $this->assertNotSame($child, $rootA);
     }
 }

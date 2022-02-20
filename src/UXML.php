@@ -6,12 +6,26 @@ use DOMElement;
 use DOMException;
 use DOMXPath;
 use InvalidArgumentException;
+use WeakMap;
+
+use function class_exists;
 use function count;
 use function preg_replace_callback;
 use function strpos;
 
 class UXML {
     const NS_PREFIX = '__uxml_ns_';
+
+    /**
+     * DOMElement instances
+     * 
+     * Map of DOMElement references used from PHP 8.0 to avoid "Creation of dynamic property" deprecation warning.
+     * In previous versions, a custom DOMElement::$uxml property is used to keep a reference to the UXML instance.
+     * 
+     * @var WeakMap<DOMElement,self>|null|false
+     */
+    private static $elements = null;
+
     /** @var DOMElement */
     protected $element;
 
@@ -36,9 +50,17 @@ class UXML {
      * 
      * @param  DOMElement $element DOM element
      * @return self                Wrapped element as a UXML instance
-     * @suppress PhanUndeclaredProperty
+     * @suppress PhanUndeclaredProperty,PhanPossiblyNonClassMethodCall
      */
     public static function fromElement(DOMElement $element): self {
+        // For PHP versions supporting WeakMap
+        if (self::$elements) {
+            return self::$elements->offsetExists($element) ?
+                self::$elements->offsetGet($element) :
+                new self($element);
+        }
+
+        // Fallback to dynamic properties
         return $element->uxml ?? new self($element);
     }
 
@@ -84,8 +106,18 @@ class UXML {
      * @suppress PhanUndeclaredProperty
      */
     private function __construct(DOMElement $element) {
+        // Initialize map of elements (if needed)
+        if (self::$elements === null) {
+            self::$elements = class_exists(WeakMap::class) ? new WeakMap() : false;
+        }
+
+        // Setup new instance
         $this->element = $element;
-        $this->element->uxml = $this;
+        if (self::$elements) {
+            self::$elements->offsetSet($this->element, $this); // @phan-suppress-current-line PhanPossiblyNonClassMethodCall
+        } else {
+            $this->element->uxml = $this;
+        }
     }
 
     /**
