@@ -12,6 +12,7 @@ use function class_exists;
 use function count;
 use function preg_replace_callback;
 use function strpos;
+use function strstr;
 
 class UXML {
     const NS_PREFIX = '__uxml_ns_';
@@ -76,9 +77,22 @@ class UXML {
      */
     public static function newInstance(string $name, ?string $value=null, array $attrs=[], ?DOMDocument $doc=null): self {
         $targetDoc = ($doc === null) ? new DOMDocument() : $doc;
-        $domElement = $targetDoc->createElement($name);
+
+        // Get namespace
+        $prefix = strstr($name, ':', true) ?: '';
+        $namespace = $attrs[empty($prefix) ? 'xmlns' : "xmlns:$prefix"] ?? $targetDoc->lookupNamespaceUri($prefix);
+
+        // Create element
+        $domElement = ($namespace === null) ?
+            $targetDoc->createElement($name) :
+            $targetDoc->createElementNS($namespace, $name);
         if ($domElement === false) {
             throw new DOMException('Failed to create DOMElement');
+        }
+
+        // Append element to document (in case of new document)
+        if ($doc === null) {
+            $targetDoc->appendChild($domElement);
         }
 
         // Set content

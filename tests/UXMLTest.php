@@ -131,6 +131,21 @@ XML;
         $this->assertSame($xml->get('{urn:abc}b'), $xml->get('ns:b'));
     }
 
+    public function testCanHandleNamespaces(): void {
+        $xml = UXML::fromString('<root xmlns="urn:root" xmlns:ns="urn:child"><ns:child /><ns:child /></root>');
+        $this->assertEquals(2, count($xml->getAll('ns:child')));
+        $xml->add('ns:child', 'Another child');
+        $this->assertEquals(3, count($xml->getAll('ns:child')));
+
+        $xml = UXML::newInstance('root', null, [
+            'xmlns:ns' => 'urn:child'
+        ]);
+        $xml->add('ns:child', 'A1')->add('child', 'A2', ['xmlns' => 'urn:child']);
+        $xml->add('ns:child', 'B1')->add('ns:child', 'B2');
+        $this->assertEquals(2, count($xml->getAll('ns:child')));
+        $this->assertEquals(4, count($xml->getAll('//ns:child')));
+    }
+
     public function testCanGetParent(): void {
         $root = UXML::newInstance('Root');
         $level1 = $root->add('Level1');
