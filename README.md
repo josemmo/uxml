@@ -12,7 +12,7 @@ It consist of just a single class which uses the PHP built-in `DOMElement` and `
 
 ### Using Composer
 ```
-composer install josemmo/uxml
+composer require josemmo/uxml
 ```
 
 ### Without Composer
