@@ -9,14 +9,14 @@ jobs:
     continue-on-error: ${{ matrix.experimental || false }}
     strategy:
       matrix:
-        php-version: ['7.1', '7.2', '7.3', '7.4', '8.0', '8.1']
+        php-version: ['7.1', '7.2', '7.3', '7.4', '8.0', '8.1', '8.2']
         include:
-          - php-version: '8.2'
+          - php-version: '8.3'
             experimental: true
     steps:
       # Download code from repository
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       # Setup PHP
       - name: Setup PHP
