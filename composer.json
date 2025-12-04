@@ -27,6 +27,8 @@
     },
     "require-dev": {
         "phan/phan": "*",
-        "symfony/phpunit-bridge": "*"
+        "symfony/phpunit-bridge": "*",
+        "phpstan/phpstan": "*",
+        "phpstan/phpstan-strict-rules": "*"
     }
 }

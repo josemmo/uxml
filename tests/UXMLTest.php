@@ -100,9 +100,9 @@ XML;
         $xml = UXML::fromString($source);
 
         $this->assertEquals('<year>1970</year>', $xml->get('director/year'));
-        $this->assertEquals('<year>1970</year>', $xml->get('director')->get('year'));
+        $this->assertEquals('<year>1970</year>', $xml->get('director')->get('year')); // @phpstan-ignore method.nonObject
         $this->assertEquals('<year>2010</year>', $xml->get('year'));
-        $this->assertEquals('<year>2010</year>', $xml->get('director')->get('//year'));
+        $this->assertEquals('<year>2010</year>', $xml->get('director')->get('//year')); // @phpstan-ignore method.nonObject
         $this->assertEquals('<name lang="en-US">Inception</name>', $xml->get('*[@lang]'));
         $this->assertNull($xml->get('genre'));
     }

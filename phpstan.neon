@@ -1,0 +1,10 @@
+parameters:
+  level: 9
+  paths:
+    - src
+    - tests
+  ignoreErrors:
+    - '#Dynamic call to static method PHPUnit\\Framework\\.*#'
+  treatPhpDocTypesAsCertain: false
+includes:
+  - vendor/phpstan/phpstan-strict-rules/rules.neon

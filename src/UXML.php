@@ -4,6 +4,8 @@ namespace UXML;
 use DOMDocument;
 use DOMElement;
 use DOMException;
+use DOMNode;
+use DOMNodeList;
 use DOMXPath;
 use InvalidArgumentException;
 use WeakMap;
@@ -43,6 +45,9 @@ class UXML {
         if (@$doc->loadXML($xmlString) === false) {
             throw new InvalidArgumentException('Failed to parse XML string');
         }
+        if ($doc->documentElement === null) {
+            throw new InvalidArgumentException('Document element not found');
+        }
         return new self($doc->documentElement);
     }
 
@@ -51,18 +56,17 @@ class UXML {
      * 
      * @param  DOMElement $element DOM element
      * @return self                Wrapped element as a UXML instance
-     * @suppress PhanUndeclaredProperty,PhanPossiblyNonClassMethodCall
      */
     public static function fromElement(DOMElement $element): self {
         // For PHP versions supporting WeakMap
-        if (self::$elements) {
+        if (self::$elements !== null && self::$elements !== false) {
             return self::$elements->offsetExists($element) ?
                 self::$elements->offsetGet($element) :
                 new self($element);
         }
 
         // Fallback to dynamic properties
-        return $element->uxml ?? new self($element);
+        return $element->uxml ?? new self($element); // @phpstan-ignore property.notFound
     }
 
     /**
@@ -79,8 +83,8 @@ class UXML {
         $targetDoc = ($doc === null) ? new DOMDocument() : $doc;
 
         // Get namespace
-        $prefix = strstr($name, ':', true) ?: '';
-        $namespace = $attrs[empty($prefix) ? 'xmlns' : "xmlns:$prefix"] ?? $targetDoc->lookupNamespaceUri($prefix);
+        $prefix = strstr($name, ':', true) ?: ''; // @phpstan-ignore ternary.shortNotAllowed
+        $namespace = $attrs[($prefix === '') ? 'xmlns' : "xmlns:$prefix"] ?? $targetDoc->lookupNamespaceURI($prefix);
 
         // Create element
         $domElement = ($namespace === null) ?
@@ -117,20 +121,19 @@ class UXML {
      * Class constructor
      * 
      * @param DOMElement $element DOM Element instance
-     * @suppress PhanUndeclaredProperty
      */
     private function __construct(DOMElement $element) {
         // Initialize map of elements (if needed)
         if (self::$elements === null) {
-            self::$elements = class_exists(WeakMap::class) ? new WeakMap() : false;
+            self::$elements = class_exists(WeakMap::class) ? new WeakMap() : false; // @phpstan-ignore assign.propertyType
         }
 
         // Setup new instance
         $this->element = $element;
-        if (self::$elements) {
-            self::$elements->offsetSet($this->element, $this); // @phan-suppress-current-line PhanPossiblyNonClassMethodCall
+        if (self::$elements !== false) {
+            self::$elements->offsetSet($this->element, $this);
         } else {
-            $this->element->uxml = $this;
+            $this->element->uxml = $this; // @phpstan-ignore property.notFound
         }
     }
 
@@ -165,10 +168,10 @@ class UXML {
     /**
      * Add child element
      * 
-     * @param  string      $name  New element tag name
-     * @param  string|null $value New element value or `null` for empty
-     * @param  array       $attrs New element attributes
-     * @return self               New element instance
+     * @param  string               $name  New element tag name
+     * @param  string|null          $value New element value or `null` for empty
+     * @param  array<string,string> $attrs New element attributes
+     * @return self                        New element instance
      * @throws DOMException if failed to create child element
      */
     public function add(string $name, ?string $value=null, array $attrs=[]): self {
@@ -186,6 +189,7 @@ class UXML {
      */
     public function getAll(string $xpath, ?int $limit=null): array {
         $namespaces = [];
+        /** @var string */
         $xpath = preg_replace_callback('/{(.+?)}/', static function($match) use (&$namespaces) {
             $ns = $match[1];
             if (!isset($namespaces[$ns])) {
@@ -195,14 +199,14 @@ class UXML {
         }, $xpath);
 
         // Create instance
-        // @phan-suppress-next-line PhanTypeMismatchArgumentNullableInternal
-        $xpathInstance = new DOMXPath($this->element->ownerDocument);
+        $xpathInstance = new DOMXPath($this->element->ownerDocument); // @phpstan-ignore argument.type
         foreach ($namespaces as $ns=>$prefix) {
             $xpathInstance->registerNamespace($prefix, $ns);
         }
 
         // Parse results
         $res = [];
+        /** @var DOMNodeList<DOMNode> */
         $domNodes = $xpathInstance->query($xpath, $this->element);
         foreach ($domNodes as $domNode) {
             if (!$domNode instanceof DOMElement) continue;
@@ -271,6 +275,7 @@ class UXML {
         if ($rootNode !== false) {
             $doc->appendChild($rootNode);
         }
+        /** @var string */
         $res = ($version === null) ? $doc->saveXML($doc->documentElement) : $doc->saveXML();
         unset($doc);
 

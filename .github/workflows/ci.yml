@@ -35,7 +35,7 @@ jobs:
       # Run static analyzer
       - name: Run static analyzer
         if: ${{ success() && matrix.php-version != '7.1' }}
-        run: vendor/bin/phan --allow-polyfill-parser --color --no-progress-bar
+        run: vendor/bin/phpstan analyse
 
       # Run tests
       - name: Run tests
