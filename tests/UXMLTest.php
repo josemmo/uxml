@@ -4,6 +4,7 @@ namespace Tests;
 use DOMDocument;
 use DOMElement;
 use DOMException;
+use InvalidArgumentException;
 use UXML\UXML;
 use PHPUnit\Framework\TestCase;
 
@@ -59,6 +60,11 @@ final class UXMLTest extends TestCase {
         $source .= "</fruits>";
         $xml = UXML::fromString($source);
         $this->assertEquals($source, $xml);
+    }
+
+    public function testCanHandleInvalidXmlStrings(): void {
+        $this->expectException(InvalidArgumentException::class);
+        UXML::fromString('<Tag>content</InvalidEndTag>');
     }
 
     public function testCanAddElements(): void {

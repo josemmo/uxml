@@ -40,7 +40,7 @@ class UXML {
     public static function fromString(string $xmlString): self {
         $doc = new DOMDocument();
         $doc->preserveWhiteSpace = false;
-        if ($doc->loadXML($xmlString) === false) {
+        if (@$doc->loadXML($xmlString) === false) {
             throw new InvalidArgumentException('Failed to parse XML string');
         }
         return new self($doc->documentElement);
