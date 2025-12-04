@@ -30,7 +30,7 @@ jobs:
 
       # Setup Composer
       - name: Setup Composer
-        run: composer validate --strict && composer install
+        run: composer validate --strict && composer install && vendor/bin/simple-phpunit --version
 
       # Run static analyzer
       - name: Run static analyzer
