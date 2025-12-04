@@ -27,7 +27,7 @@ class UXML {
      * 
      * @var WeakMap<DOMElement,self>|null|false
      */
-    private static $elements = null;
+    private static $elements = null; // @phpstan-ignore class.notFound
 
     /** @var DOMElement */
     protected $element;
@@ -60,8 +60,8 @@ class UXML {
     public static function fromElement(DOMElement $element): self {
         // For PHP versions supporting WeakMap
         if (self::$elements !== null && self::$elements !== false) {
-            return self::$elements->offsetExists($element) ?
-                self::$elements->offsetGet($element) :
+            return self::$elements->offsetExists($element) ? // @phpstan-ignore class.notFound
+                self::$elements->offsetGet($element) : // @phpstan-ignore class.notFound
                 new self($element);
         }
 
@@ -84,7 +84,7 @@ class UXML {
 
         // Get namespace
         $prefix = strstr($name, ':', true) ?: ''; // @phpstan-ignore ternary.shortNotAllowed
-        $namespace = $attrs[($prefix === '') ? 'xmlns' : "xmlns:$prefix"] ?? $targetDoc->lookupNamespaceURI($prefix);
+        $namespace = $attrs[($prefix === '') ? 'xmlns' : "xmlns:$prefix"] ?? $targetDoc->lookupNamespaceUri($prefix); // @phpstan-ignore method.nameCase
 
         // Create element
         $domElement = ($namespace === null) ?
@@ -131,7 +131,7 @@ class UXML {
         // Setup new instance
         $this->element = $element;
         if (self::$elements !== false) {
-            self::$elements->offsetSet($this->element, $this);
+            self::$elements->offsetSet($this->element, $this); // @phpstan-ignore class.notFound
         } else {
             $this->element->uxml = $this; // @phpstan-ignore property.notFound
         }
