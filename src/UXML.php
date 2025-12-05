@@ -162,7 +162,7 @@ class UXML {
      * @return boolean `true` if the element has no inner content, `false` otherwise
      */
     public function isEmpty(): bool {
-        return ($this->element->childNodes->length === 0);
+        return !$this->element->hasChildNodes();
     }
 
     /**

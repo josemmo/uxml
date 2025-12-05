@@ -23,14 +23,17 @@ final class UXMLTest extends TestCase {
     public function testCanCreateElements(): void {
         $xml = UXML::newInstance('RootTagName');
         $this->assertEquals('<RootTagName/>', $xml);
+        $this->assertTrue($xml->isEmpty());
 
         $xml = UXML::fromElement(new DOMElement('TagName'));
         $this->assertEquals('<TagName/>', $xml);
+        $this->assertTrue($xml->isEmpty());
     }
 
     public function testCanHandleSpecialCharacters(): void {
         $xml = UXML::newInstance('Test', 'A&a Co. > B&b Ltd.');
         $this->assertEquals('<Test>A&amp;a Co. &gt; B&amp;b Ltd.</Test>', $xml);
+        $this->assertFalse($xml->isEmpty());
 
         $this->expectException(DOMException::class);
         UXML::newInstance('Test&Fail', 'Not a valid tag name');
@@ -74,6 +77,7 @@ final class UXMLTest extends TestCase {
         $this->assertEquals('<ChildA>Name</ChildA>', $childA);
         $this->assertEquals('<ChildB/>', $childB);
         $this->assertEquals('<Parent><ChildA>Name</ChildA><Wrapper><ChildB/></Wrapper></Parent>', $xml);
+        $this->assertFalse($xml->isEmpty());
     }
 
     public function testCanHandleAttributes(): void {
