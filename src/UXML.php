@@ -58,15 +58,17 @@ class UXML {
      * @return self                Wrapped element as a UXML instance
      */
     public static function fromElement(DOMElement $element): self {
-        // For PHP versions supporting WeakMap
-        if (self::$elements !== null && self::$elements !== false) {
-            return self::$elements->offsetExists($element) ? // @phpstan-ignore class.notFound
-                self::$elements->offsetGet($element) : // @phpstan-ignore class.notFound
-                new self($element);
-        }
+        $cachedElements = self::getCachedElements();
 
         // Fallback to dynamic properties
-        return $element->uxml ?? new self($element); // @phpstan-ignore property.notFound
+        if ($cachedElements === false) {
+            return $element->uxml ?? new self($element); // @phpstan-ignore property.notFound
+        }
+
+        // Use WeakMap when supported
+        return $cachedElements->offsetExists($element) ? // @phpstan-ignore class.notFound
+            $cachedElements->offsetGet($element) : // @phpstan-ignore class.notFound
+            new self($element);
     }
 
     /**
@@ -118,22 +120,32 @@ class UXML {
     }
 
     /**
+     * Get cached elements
+     * 
+     * @return WeakMap<DOMElement,self>|false Weak map of cached elements or `false` if not supported
+     */
+    private static function getCachedElements() {
+        if (self::$elements === null) {
+            self::$elements = class_exists(WeakMap::class) ? new WeakMap() : false; // @phpstan-ignore assign.propertyType
+        }
+        return self::$elements; // @phpstan-ignore return.type
+    }
+
+    /**
      * Class constructor
      * 
      * @param DOMElement $element DOM Element instance
      */
     private function __construct(DOMElement $element) {
-        // Initialize map of elements (if needed)
-        if (self::$elements === null) {
-            self::$elements = class_exists(WeakMap::class) ? new WeakMap() : false; // @phpstan-ignore assign.propertyType
-        }
-
-        // Setup new instance
+        // Keep reference of DOMElement instance
         $this->element = $element;
-        if (self::$elements !== false) {
-            self::$elements->offsetSet($this->element, $this); // @phpstan-ignore class.notFound
-        } else {
+
+        // Keep reference of UXML instance
+        $cachedElements = self::getCachedElements();
+        if ($cachedElements === false) {
             $this->element->uxml = $this; // @phpstan-ignore property.notFound
+        } else {
+            $cachedElements->offsetSet($this->element, $this); // @phpstan-ignore class.notFound
         }
     }
 
