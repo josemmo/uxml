@@ -138,7 +138,7 @@ class UXML {
      * 
      * @return WeakMap<DOMElement,self>|false Weak map of cached elements or `false` if not supported
      */
-    private static function getCachedElements() {
+    private static function getCachedElements() { // @phpstan-ignore class.notFound
         if (self::$elements === null) {
             self::$elements = class_exists(WeakMap::class) ? new WeakMap() : false; // @phpstan-ignore assign.propertyType
         }
