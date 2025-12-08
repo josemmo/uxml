@@ -10,6 +10,8 @@ use DOMXPath;
 use InvalidArgumentException;
 use WeakMap;
 
+use const XML_ELEMENT_NODE;
+
 use function class_exists;
 use function count;
 use function preg_replace_callback;
@@ -165,7 +167,15 @@ class UXML {
      */
     public function parent(): self {
         $parentNode = $this->element->parentNode;
-        return ($parentNode !== null && $parentNode instanceof DOMElement) ? self::fromElement($parentNode) : $this;
+
+        // Has a parent node which is a DOM element
+        if ($parentNode !== null && $parentNode->nodeType === XML_ELEMENT_NODE) {
+            /** @var DOMElement $parentNode */
+            return self::fromElement($parentNode);
+        }
+
+        // Has no valid parent
+        return $this;
     }
 
     /**
