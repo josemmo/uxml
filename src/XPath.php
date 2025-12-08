@@ -126,7 +126,7 @@ class XPath {
             $segmentParts = explode(':', $segment, 2);
             if (isset($segmentParts[1])) {
                 [$prefix, $elementName] = $segmentParts;
-                $namespace = $this->prefixes[$prefix] ?? $this->instance->document->lookupNamespaceURI($prefix);
+                $namespace = $this->prefixes[$prefix] ?? $this->instance->document->lookupNamespaceUri($prefix); // @phpstan-ignore method.nameCase
             } else {
                 $namespace = null;
                 $elementName = $segmentParts[0];
@@ -137,6 +137,7 @@ class XPath {
             $nextQueue = [];
             foreach ($currentQueue as $parent) {
                 foreach ($parent->childNodes as $child) {
+                    /** @var DOMNode $child */
                     if ($child->nodeType !== XML_ELEMENT_NODE) continue;
                     if ($child->localName !== $elementName) continue;
                     if ($child->namespaceURI !== $namespace) continue;

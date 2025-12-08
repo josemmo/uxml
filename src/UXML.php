@@ -168,7 +168,7 @@ class UXML {
         if (!self::$xpaths->offsetExists($document)) { // @phpstan-ignore class.notFound
             self::$xpaths->offsetSet($document, new XPath($document)); // @phpstan-ignore class.notFound
         }
-        return self::$xpaths->offsetGet($document); // @phpstan-ignore return.type
+        return self::$xpaths->offsetGet($document); // @phpstan-ignore class.notFound,return.type
     }
 
     /**
