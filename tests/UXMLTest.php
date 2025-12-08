@@ -108,6 +108,8 @@ XML;
         $this->assertEquals('<year>2010</year>', $xml->get('year'));
         $this->assertEquals('<year>2010</year>', $xml->get('director')->get('//year')); // @phpstan-ignore method.nonObject
         $this->assertEquals('<name lang="en-US">Inception</name>', $xml->get('*[@lang]'));
+        $this->assertNull($xml->get('surname'));
+        $this->assertEquals('<surname>Nolan</surname>', $xml->get('director/surname'));
         $this->assertNull($xml->get('genre'));
     }
 
@@ -206,5 +208,51 @@ XML;
         $this->assertSame($rootA->get('Child'), $child);
         $this->assertSame($child->parent(), $rootA);
         $this->assertNotSame($child, $rootA);
+    }
+
+    public function testBenchmarkXpath(): void {
+        $ns = 'https://example.com/customers.xsd';
+        $geoNs = 'https://example.com/geolocation.xsd';
+        $source = <<<XML
+<customers xmlns="{$ns}" xmlns:geo="{$geoNs}">
+   <customer id="55000">
+      <name>Charter Group</name>
+      <geo:address>
+         <geo:street>100 Main</geo:street>
+         <geo:city>Framingham</geo:city>
+         <geo:state>MA</geo:state>
+         <geo:zip>01701</geo:zip>
+      </geo:address>
+      <geo:address>
+         <geo:street>720 Prospect</geo:street>
+         <geo:city>Framingham</geo:city>
+         <geo:state>MA</geo:state>
+         <geo:zip>01701</geo:zip>
+      </geo:address>
+      <geo:address>
+         <geo:street>120 Ridge</geo:street>
+         <geo:state>MA</geo:state>
+         <geo:zip>01760</geo:zip>
+      </geo:address>
+   </customer>
+</customers>
+XML;
+        $xml = UXML::fromString($source);
+
+        $startTime = microtime(true);
+        for ($i=0; $i<10000; $i++) {
+            foreach ($xml->getAll("{{$ns}}customer") as $customer) {
+                $stateElements = $customer->getAll("{{$geoNs}}address/{{$geoNs}}state");
+                $this->assertEquals(3, count($stateElements));
+                foreach ($stateElements as $state) {
+                    $this->assertEquals('MA', $state->asText());
+                }
+            }
+        }
+        $endTime = microtime(true);
+        $diffTime = $endTime - $startTime;
+
+        $this->assertLessThan(0.5, $diffTime);
+        fwrite(STDERR, " › Benchmark took $diffTime seconds\n");
     }
 }

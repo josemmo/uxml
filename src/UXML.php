@@ -4,23 +4,17 @@ namespace UXML;
 use DOMDocument;
 use DOMElement;
 use DOMException;
-use DOMNode;
-use DOMNodeList;
-use DOMXPath;
 use InvalidArgumentException;
 use WeakMap;
 
+use const PHP_INT_MAX;
 use const XML_ELEMENT_NODE;
 
 use function class_exists;
-use function count;
-use function preg_replace_callback;
 use function strpos;
 use function strstr;
 
 class UXML {
-    const NS_PREFIX = '__uxml_ns_';
-
     /**
      * DOMElement instances
      * 
@@ -31,8 +25,26 @@ class UXML {
      */
     private static $elements = null; // @phpstan-ignore class.notFound
 
+    /**
+     * XPath instances
+     * 
+     * Map of XPath instances indexed by DOMDocument. As with `self::$elements`, this uses a WeakMap if available
+     * or a custom DOMDocument::$xpath property in legacy versions.
+     * 
+     * Used for performance purposes.
+     * 
+     * @var WeakMap<DOMDocument,XPath>|null|false
+     */
+    private static $xpaths = null; // @phpstan-ignore class.notFound
+
     /** @var DOMElement */
     protected $element;
+
+    /**
+     * Reference to the DOM document to which this element belongs, to stop PHP from garbage collecting it.
+     * @var DOMDocument
+     */
+    protected $document;
 
     /**
      * Create instance from XML string
@@ -134,13 +146,39 @@ class UXML {
     }
 
     /**
+     * Get or create DOMXPath instance
+     * 
+     * @param  DOMDocument $document DOM Document instance 
+     * @return XPath                 XPath instance
+     */
+    private static function getOrCreateXpath(DOMDocument $document): XPath {
+        if (self::$xpaths === null) {
+            self::$xpaths = class_exists(WeakMap::class) ? new WeakMap() : false; // @phpstan-ignore assign.propertyType
+        }
+
+        // Fallback to dynamic properties
+        if (self::$xpaths === false) {
+            if (!isset($document->uxmlXpath)) { // @phpstan-ignore property.notFound
+                $document->uxmlXpath = new XPath($document); // @phpstan-ignore property.notFound
+            }
+            return $document->uxmlXpath; // @phpstan-ignore property.notFound
+        }
+
+        // Use WeakMap when supported
+        if (!self::$xpaths->offsetExists($document)) { // @phpstan-ignore class.notFound
+            self::$xpaths->offsetSet($document, new XPath($document)); // @phpstan-ignore class.notFound
+        }
+        return self::$xpaths->offsetGet($document); // @phpstan-ignore return.type
+    }
+
+    /**
      * Class constructor
      * 
      * @param DOMElement $element DOM Element instance
      */
     private function __construct(DOMElement $element) {
-        // Keep reference of DOMElement instance
         $this->element = $element;
+        $this->document = $element->ownerDocument; // @phpstan-ignore assign.propertyType
 
         // Keep reference of UXML instance
         $cachedElements = self::getCachedElements();
@@ -197,7 +235,7 @@ class UXML {
      * @throws DOMException if failed to create child element
      */
     public function add(string $name, ?string $value=null, array $attrs=[]): self {
-        $child = self::newInstance($name, $value, $attrs, $this->element->ownerDocument);
+        $child = self::newInstance($name, $value, $attrs, $this->document);
         $this->element->appendChild($child->element);
         return $child;
     }
@@ -210,33 +248,19 @@ class UXML {
      * @return self[]          Matched elements
      */
     public function getAll(string $xpath, ?int $limit=null): array {
-        $namespaces = [];
-        /** @var string */
-        $xpath = preg_replace_callback('/{(.+?)}/', static function($match) use (&$namespaces) {
-            $ns = $match[1];
-            if (!isset($namespaces[$ns])) {
-                $namespaces[$ns] = self::NS_PREFIX . count($namespaces);
-            }
-            return $namespaces[$ns] . ':';
-        }, $xpath);
-
-        // Create instance
-        $xpathInstance = new DOMXPath($this->element->ownerDocument); // @phpstan-ignore argument.type
-        foreach ($namespaces as $ns=>$prefix) {
-            $xpathInstance->registerNamespace($prefix, $ns);
-        }
+        $xpathInstance = self::getOrCreateXpath($this->document);
 
         // Parse results
-        $res = [];
-        /** @var DOMNodeList<DOMNode> */
-        $domNodes = $xpathInstance->query($xpath, $this->element);
-        foreach ($domNodes as $domNode) {
-            if (!$domNode instanceof DOMElement) continue;
-            $res[] = self::fromElement($domNode);
-            if ($limit !== null && --$limit <= 0) break;
+        $results = [];
+        $limit = ($limit === null) ? PHP_INT_MAX : $limit;
+        foreach ($xpathInstance->query($xpath, $this->element) as $domElement) {
+            $results[] = self::fromElement($domElement);
+            if (--$limit <= 0) {
+                break;
+            }
         }
 
-        return $res;
+        return $results;
     }
 
     /**
