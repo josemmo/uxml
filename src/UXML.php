@@ -328,6 +328,20 @@ class UXML {
         return $res;
     }
 
+    public static function resetCaches(): void
+    {
+        // Resets internal static caches.
+        // Intended for long-running processes (CLI / workers).
+
+        if (self::$elements instanceof \WeakMap) {
+            self::$elements = new \WeakMap();
+        }
+
+        if (self::$xpaths instanceof \WeakMap) {
+            self::$xpaths = new \WeakMap();
+        }
+    }
+
     /**
      * @inheritdoc
      */
